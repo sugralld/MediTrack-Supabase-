@@ -118,10 +118,6 @@ const DetailPage = () => {
                 }).format(medicine.price)}
               </Typography>
               <Typography className="text-gray-500">
-                <strong className="text-black">Dosis:</strong>{" "}
-                {medicine.description}
-              </Typography>
-              <Typography className="text-gray-500">
                 <strong className="text-black">Stok:</strong> {medicine.stock}
               </Typography>
             </div>
