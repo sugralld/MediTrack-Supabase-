@@ -1,0 +1,36 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+
+export async function middleware(req: NextRequest) {
+  let res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
+
+  // Ambil session dari Supabase
+  const { data: { session } } = await supabase.auth.getSession();
+
+  console.log("Middleware Session:", session);
+  
+  // Ambil user dari session
+  const user = session?.user;
+  console.log("Middleware User:", user);
+
+  const path = req.nextUrl.pathname;
+
+  // Jika belum login dan bukan di /login, redirect ke /login
+  if (!user && path !== "/login") {
+    console.log("Redirecting to /login");
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  // Jika user sudah login dan mengakses /login, redirect ke /
+  if (user && path === "/login") {
+    console.log("User sudah login, redirect ke /");
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  return res;
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/)).*)"],
+};
